@@ -20,7 +20,7 @@
                     out.print("index");
             }
             else{
-                if(request.getParameter("vcode").length()==0 && request.getParameter("cmt").length()==0 && request.getParameter("femail").length()==0){
+                if(request.getParameter("vcode").length()==0 || request.getParameter("cmt").length()==0 || request.getParameter("femail").length()==0){
                     //response.sendRedirect("index.jsp");
                     out.print("index");
                 }
@@ -75,16 +75,21 @@
 
                             if(ps.executeUpdate()>0){
                                 %>
-                                <div >
-                                    <h3><%=from_name%> <span><%=date%></span></h3>
-                                    <p>
-                                        <%=comment%>
-                                    </p>
-                                    <div class="comment-action">
-                                        <i class='bx bx-like'></i><span>15</span>     
-                                        <i class='bx bx-dislike'></i><span>5</span>
-                                        <span>REPLY</span>
-                                        <a href="">All replies</a>
+                                <div class="col-sm-12" id="d-<%=code%>">
+                                    <div class="row">
+                                        <div class="col-sm-1">
+                                            <img src="profile/<%=rs1.getString("code")%>.jpg" alt="profileImg" style="width: 35px;height: 35px;border-radius: 50%;margin-right: 15px;">
+                                        </div>
+                                        <div class="col-sm-11">
+                                            <h3><%=from_name%> <span><%=date%></span></h3>
+                                            <p id="e-<%=code%>"><%=comment%></p>
+                                            <div class="comment-action">
+                                                <i class='bx bxs-like' pid="like" id="like-<%=code%>" rel="<%=code%>"></i><span id="likecount-<%=code%>">0</span>     
+                                                <i class='bx bxs-dislike' pid="dislike" id="dislike-<%=code%>" rel="<%=code%>"></i><span id="dislikecount-<%=code%>">0</span>
+                                                <i class='bx bxs-edit' style="color: blue" id="<%=code%>"></i> &nbsp;&nbsp;&nbsp;&nbsp;
+                                                <i class='bx bxs-message-square-x' rel="<%=code%>" style="color: red"></i>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <%

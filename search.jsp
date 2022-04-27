@@ -12,20 +12,22 @@
             out.print("index");
         }
         else{
-            String search = request.getParameter("sch");                    
+            String search = request.getParameter("sch"); 
+            String s[] = search.split(" ");
+            String sql = "select * from video where video_name like '%"+search+"%' OR detail like '%"+search+"%'";
+            for(int i=0;i<s.length;i++){
+                sql = sql+"OR video_name like '%"+s[i]+"%' OR detail like '%"+s[i]+"%'";
+            }
             try{
                 Class.forName("com.mysql.jdbc.Driver");
                 Connection cn = DriverManager.getConnection("jdbc:mysql://localhost:3306/youtube","root","");
                 Statement st = cn.createStatement();
-                ResultSet rs1 = st.executeQuery("select * from video where video_name like '%"+search+"%' OR video_name like '%"+search+"' OR video_name like '"+search+"%' OR detail like '%"+search+"%' OR detail like '%"+search+"' OR detail like '"+search+"%'");
+                ResultSet rs1 = st.executeQuery(sql);
                %>
                <div class="row">
-
                <%
                 while(rs1.next()){
-                                           //out.print(rs.getString("video_name"));
                     %>
-
                     <div class="col-sm-3 video-block">
                                 <table class="table table-borderless card w3-card" style="width:320px;">
                                     <tr>

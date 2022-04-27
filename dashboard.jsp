@@ -38,6 +38,9 @@
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 	<link href="asset/css/fontawesome-all.css" rel="stylesheet">
         <script src="https://use.fontawesome.com/09901d9403.js"></script>
+        <script>
+           
+        </script>
    </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -172,7 +175,8 @@
                                                    <td><img src="channel_Image/<%=rs.getString("code")%>.jpg" alt="channel_image" class="img-fluid" style="width:150px;height:100px;"/><br><br>
                                                         <a href="edit_cimage.jsp?ccode=<%=rs.getString("code")%>"><button class="btn btn-warning">Edit Image</button></a>
                                                     </td>
-                                                   <td style="width:400px" ><%=rs.getString("channel_name")%></td>
+                                                   <td style="width:300px" ><%=rs.getString("channel_name")%></td>
+                                                   <td><a href="view_channel.jsp?ccode=<%=rs.getString("code")%>"><button class="btn btn-info">View <i class="fa fa-eye" aria-hidden="true"></i></button></a></td>
                                                    <td><a href="video.jsp?ccode=<%=rs.getString("code")%>"><button class="btn btn-primary">Add Video</button></a></td>
                                                    <td><a href="edit_channel.jsp?ccode=<%=rs.getString("code")%>"><i class="fa fa-edit" style="color:blue;cursor:pointer" ></i></a></td>
                                                    <td><a href="delete_channel.jsp?ccode=<%=rs.getString("code")%>"><i class="fa fa-trash" style="color:red;cursor:pointer"></i></a></td>

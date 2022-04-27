@@ -27,13 +27,11 @@
                     try{
                         Class.forName("com.mysql.jdbc.Driver");
                         Connection cn=DriverManager.getConnection("jdbc:mysql://localhost:3306/youtube","root","");
-                        PreparedStatement ps = cn.prepareStatement("update channel set status=? where code=?");
-                        ps.setString(1,status);
-                        ps.setString(2,channel_code);
+                        PreparedStatement ps = cn.prepareStatement("delete from channel where code=?");
+                        ps.setString(1,channel_code);
                         if(ps.executeUpdate()>0){
-                            PreparedStatement ps1 = cn.prepareStatement("update video set status=? where channel_code=?");
-                            ps1.setString(1,status);
-                            ps1.setString(2,channel_code);
+                            PreparedStatement ps1 = cn.prepareStatement("delete from video where channel_code=?");
+                            ps1.setString(1,channel_code);
                             if(ps1.executeUpdate()>0){
                                 response.sendRedirect("dashboard.jsp?delete_success=1");
                             }

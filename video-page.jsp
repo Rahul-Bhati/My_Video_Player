@@ -685,6 +685,9 @@ a{
         margin-top: 15px;
     }
 }
+i{
+    cursor: pointer;
+}
 </style>
     <script>
         $(document).ready(function(){
@@ -737,20 +740,6 @@ a{
                     }
                 );
             });
-            $(".bx.bxs-send").click(function(){
-                var code = $(".cmt-text").attr("id");
-                var text = $(".cmt-text").val();
-                var femail = $(".cmt-text").attr("rel"); 
-                //alert(code+" "+text+" "+femail);
-                $.post(
-                        "comment.jsp",{vcode:code,cmt:text,femail:femail},function(data){
-                            var dt = data.trim();
-                            //alert(data);
-                            $(".cmt-text").val(" ");
-                            $("#cmt").html(dt);
-                        }
-                );
-            });
             $(".btn.btn_common").click(function(){
                 var text = $("#search").val();
                 $.post(
@@ -792,19 +781,19 @@ a{
                          }
                     );
                 });
-                $(".tags").click(function(){
-                    var text = $("#tags").text();
-                    $.post(
-                         "search.jsp",{sch:text},function(data){
-                            var dt = data.trim();
-                            if(dt != "index"){
-                                //alert(data);
-                                $("#search").val(text);
-                                $("#rec").html(data);
-                            }
-                         }
-                    );
-                });
+            $(".tags").click(function(){
+                var text = $("#tags").text();
+                $.post(
+                     "search.jsp",{sch:text},function(data){
+                        var dt = data.trim();
+                        if(dt != "index"){
+                            //alert(data);
+                            $("#search").val(text);
+                            $("#rec").html(data);
+                        }
+                     }
+                );
+            });
             $(".channel").click(function(){
                     var code = $(this).attr("id");
                     //alert(code);
@@ -818,16 +807,24 @@ a{
                          }
                     );
                 });
-            
-                $(".favourite").click(function(){
-                    $("#rec").load("favourite_page.jsp");
-                });
-                $(".watch-later").click(function(){
-                    $("#rec").load("watch_later_page.jsp");
-                });
-                $(".history").click(function(){
+            $(".favourite").click(function(){
+                $("#rec").load("favourite_page.jsp");
+            });
+            $(".watch-later").click(function(){
+                $("#rec").load("watch_later_page.jsp");
+            });
+            $(".history").click(function(){
                     $("#rec").load("history_page.jsp");
                 });
+            $(".bx.bx-shuffle").click(function(){
+                var vcode = $(this).attr("rel");
+                $.post(
+                      "load_rand_video.jsp",{vcode:vcode},function(data){
+                            var dt = data.trim();
+                            $("#random-video").html(dt);
+                      }
+                );
+            });
         });
         $(document).on("click",".channel",function(){
             var code = $(this).attr("id");
@@ -842,11 +839,10 @@ a{
                  }
             );
          });
-         $(document).on("click",".btn.btn_common",function(){
+        $(document).on("click",".btn.btn_common",function(){
                 var text = $("#search").val();
                 $.post(
                      "search.jsp",{sch:text},function(data){
-                          //alert(data);
                           var dt = data.trim();
                           if(dt != "index"){
                                 //alert(data);
@@ -855,7 +851,7 @@ a{
                      }
                 );
           });
-          $(document).on("click",".bx.bxs-trash.1",function(){
+        $(document).on("click",".bx.bxs-trash.1",function(){
                 var code = $(this).attr("rel");
                 $.post(
                      "remove_fav.jsp",{vcode:code},function(data){
@@ -867,7 +863,7 @@ a{
                      }
                 );
           });
-          $(document).on("click",".bx.bxs-trash.2",function(){
+        $(document).on("click",".bx.bxs-trash.2",function(){
                 var code = $(this).attr("rel");
                 $.post(
                      "remove_watch.jsp",{vcode:code},function(data){
@@ -879,7 +875,7 @@ a{
                      }
                 );
           });
-          $(document).on("click",".bx.bxs-trash.3",function(){
+        $(document).on("click",".bx.bxs-trash.3",function(){
                 var code = $(this).attr("rel");
                 $.post(
                      "remove_history.jsp",{vcode:code},function(data){
@@ -891,6 +887,106 @@ a{
                      }
                 );
           });
+          
+/* =======================================  JQuery for comment operation Start ===================================  */
+        $(document).on("click",".bx.bxs-send",function(){
+                var code = $(".cmt-text").attr("id");
+                var text = $(".cmt-text").val();
+                var femail = $(".cmt-text").attr("rel"); 
+                //alert(code+" "+text+" "+femail);
+                $.post(
+                        "comment.jsp",{vcode:code,cmt:text,femail:femail},function(data){
+                            var dt = data.trim();
+                            //alert(dt);
+                            if(dt != "index"){
+                                $(".cmt-text").val(" ");
+                                $("#cmt").append(dt);
+                            }
+                        }
+                );
+            });
+        $(document).on("click",".bx.bxs-edit",function(){
+            var code = $(this).attr("id");
+            var val = $("#e-"+code).text();
+            //alert(code+" "+val);
+            $("#e-"+code).html("<input id='s-"+code+"' type='text' value='"+val+"' class='form-control' style='width:80%'>");
+            $("#"+code).attr("class","bx bxs-save");
+        });
+        $(document).on("click",".bx.bxs-save",function(){
+            var code = $(this).attr("id");
+            var val = $("#s-"+code).val();
+            //alert(code+" "+val);
+            $.post(
+                 "save_cmt.jsp",{code:code,val:val},function(data){
+                     if(data.trim()=="success"){
+                         $("#e-"+code).text(val);
+                         $("#"+code).attr("class","bx bxs-edit");
+                     }
+                 }
+            );
+        });
+        $(document).on("click",".bx.bxs-message-square-x",function(){
+            var code = $(this).attr("rel");
+            //alert(code);
+            $.post(
+                 "del_cmt.jsp",{code:code},function(data){
+                     if(data.trim()=="success")
+                        $("#d-"+code).fadeOut(1000);
+                 }
+            );
+        });
+        $(document).on("click",".bx.bxs-like",function(){
+            var code = $(this).attr("rel");
+            var pid = $("#like-"+code).attr("pid");
+            $.post(
+                 "cmt_liked.jsp",{code:code,pid:pid},function(data){
+                     var dt = data.trim();
+                     var s = dt.split("-");
+                     if(dt!="index"){
+                       $("#like-"+code).css("color",s[0]);                
+                       $("#dislike-"+code).css("color","black");
+                       $("#likecount-"+code).text(s[1]);
+                       $("#dislikecount-"+code).text(s[2]);
+                     }
+                 }
+            );
+            
+        });
+        $(document).on("click",".bx.bxs-dislike",function(){
+            var code = $(this).attr("rel");
+            var pid = $("#dislike-"+code).attr("pid");
+            $.post(
+                 "cmt_disliked.jsp",{code:code,pid:pid},function(data){
+                     var dt = data.trim();
+                     var s = dt.split("-");
+                     if(dt!="index"){
+                       $("#dislike-"+code).css("color",s[0]);                
+                       $("#like-"+code).css("color","black");
+                       $("#likecount-"+code).text(s[1]);
+                       $("#dislikecount-"+code).text(s[2]);
+                     }
+                 }
+            );
+        });
+        $(document).ready(function(){
+            $(".btn.load").click(function(){
+                var id = $(this).attr("id");
+                var next = parseInt(id)+1;
+                var vcode = $(this).attr("rel");
+               // alert(id+" "+next+" "+vcode);
+                $.post(
+                      "load_cmt.jsp",{id:id,vcode:vcode},function(data){
+                            var dt = data.trim();
+                            if(dt=="")
+                                $(".btn.load").fadeToggle(1000);
+                            $("#cmt").append(dt);
+                            $(".btn.load").attr("id",next);
+                      }
+                );
+            });
+        });
+/* =======================================  JQuery for comment operation End ===================================  */
+
     </script>
 </head>
 <body>
@@ -1212,48 +1308,121 @@ a{
                             }        
                         %>
                     </div>
+                    <div class="old-comment row" id="cmt">
+                        
                     <%
                          Statement st11 = cn.createStatement();
-                         ResultSet rs11 = st11.executeQuery("select * from comment where video_code='"+video_code+"' limit 0,3 ");
+                         ResultSet rs11 = st11.executeQuery("select * from comment where video_code='"+video_code+"' limit 0,1 ");
                          while(rs11.next()){
                              String from_email = rs11.getString("from_email");
+                             String cmt_code = rs11.getString("code");
                              Statement st12 = cn.createStatement();
                              ResultSet rs12 = st12.executeQuery("select * from user where email='"+from_email+"'");
                              if(rs12.next()){
+                                
+                                String ptrn = "";
+                                int cmt_like=0,cmt_dislike=0;
+                                Statement st21 = cn.createStatement();
+                                ResultSet rs21 = st21.executeQuery("select * from cmt_liked where cmt_code='"+cmt_code+"' AND email='"+email+"'");
+                                if(rs21.next()){
+                                    ptrn = rs21.getString("ptr");
+                                }
+                                
+                                Statement st22 = cn.createStatement();
+                                ResultSet rs22 = st22.executeQuery("select count(*) from cmt_liked where cmt_code='"+cmt_code+"' AND ptr='like'");
+                                if(rs22.next()){
+                                    cmt_like = Integer.parseInt(rs22.getString("count(*)"));
+                                }
+                                Statement st23 = cn.createStatement();
+                                ResultSet rs23 = st23.executeQuery("select count(*) from cmt_liked where cmt_code='"+cmt_code+"' AND ptr='dislike'");
+                                if(rs23.next()){
+                                    cmt_dislike = Integer.parseInt(rs23.getString("count(*)"));
+                                }
+                                
+                                 if(from_email.equals(email)){
+                                    %>
+                                    <div class="col-sm-12" id="d-<%=rs11.getString("code")%>">
+                                        <div class="row">
+                                            <div class="col-sm-1">
+                                                <img src="profile/<%=rs12.getString("code")%>.jpg" alt="profileImg" style="width: 35px;height: 35px;border-radius: 50%;margin-right: 15px;">
+                                            </div>
+                                            <div class="col-sm-11">
+                                                <h3><%=rs11.getString("from_name")%> <span><%=rs11.getString("date")%></span></h3>
+                                                <p id="e-<%=rs11.getString("code")%>"><%=rs11.getString("comment")%></p>
+                                                <div class="comment-action">
+                                                    <i class='bx bxs-like' pid="like" id="like-<%=rs11.getString("code")%>" rel="<%=rs11.getString("code")%>"></i>&nbsp;&nbsp;<span id="likecount-<%=rs11.getString("code")%>"><%=cmt_like%></span>     
+                                                    <i class='bx bxs-dislike' pid="dislike" id="dislike-<%=rs11.getString("code")%>" rel="<%=rs11.getString("code")%>"></i>&nbsp;&nbsp;<span id="dislikecount-<%=rs11.getString("code")%>"><%=cmt_dislike%></span>
+                                                    <i class='bx bxs-edit' style="color: blue" id="<%=rs11.getString("code")%>"></i> &nbsp;&nbsp;&nbsp;&nbsp;
+                                                    <i class='bx bxs-message-square-x' rel="<%=rs11.getString("code")%>" style="color: red"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <%
+                                 }
+                                 else{
                       %>
-                    <div class="old-comment col-sm-12" >
-                      
-                        <img src="profile/<%=rs12.getString("code")%>.jpg" alt="profileImg">
-                        <div id="cmt">
-                            <h3><%=rs11.getString("from_name")%> <span><%=rs11.getString("date")%></span></h3>
-                            <p>
-                                <%=rs11.getString("comment")%>
-                            </p>
-                            <div class="comment-action">
-                                <i class='bx bx-like'></i><span>15</span>     
-                                <i class='bx bx-dislike'></i><span>5</span>
-                                <span>REPLY</span>
-                                <a href="">All replies</a>
+                        
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-1">
+                                     <img src="profile/<%=rs12.getString("code")%>.jpg" alt="profileImg">
+                                </div>
+                                <div class="col-sm-11">
+                                    <h3><%=rs11.getString("from_name")%> <span><%=rs11.getString("date")%></span></h3>
+                                    <p>
+                                        <%=rs11.getString("comment")%>
+                                    </p>
+                                    <div class="comment-action">
+                                        <i class='bx bxs-like' pid="like" id="like-<%=rs11.getString("code")%>" rel="<%=rs11.getString("code")%>"></i>&nbsp;&nbsp;<span id="likecount-<%=rs11.getString("code")%>"><%=cmt_like%></span>     
+                                        <i class='bx bxs-dislike' pid="dislike" id="dislike-<%=rs11.getString("code")%>" rel="<%=rs11.getString("code")%>"></i>&nbsp;&nbsp;<span id="dislikecount-<%=rs11.getString("code")%>"><%=cmt_dislike%></span>
+                                        <span>REPLY</span>
+                                        <a href="">All replies</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                     
-                    </div>
                              <%
+                                 }
+                                 %>
+                      <script>
+                        $(document).ready(function(){
+                            var cmcode = "<%=cmt_code%>";
+                            var ptr = "<%=ptrn%>";
+                            if(ptr=="like"){
+                                $("#like-"+cmcode).css("color","blue");                
+                                $("#dislike-"+cmcode).css("color","black");
+                            }
+                            else if(ptr=="dislike"){
+                                $("#dislike-"+cmcode).css("color","blue");                
+                                $("#like-"+cmcode).css("color","black");
+                            }
+                        });
+                    </script>
+                                 <%
                              }
                           }
                       %>
-                     
+                      
+                     </div>
+                      <div class="load-more">
+                          <center><button id="1" class="btn load" rel="<%=video_code%>" style="border-bottom:1px solid black;"><span style="font-size:18px;padding:0;">load more</span></button></center>
+                      </div>
                 </div>
             </div>
             <div class="right-sidebar col-sm-4">
-                <div class="side-video-list row">
+                <div class="container">
+                    <span class="pills" style="font-family:sans-serif;font-size:20px;"><b>Random Videos</b></span>
+                    <button style="float:right" class="btn load-video" title="shuffle"><i class='bx bx-shuffle' rel="<%=video_code%>" style="font-size:20px;"></i></button>
+                </div>
+                <div class="side-video-list row" id="random-video">
                      <%
                         Statement st6 = cn.createStatement();
-                        ResultSet rs6 = st6.executeQuery("select * from video order by rand() limit 0,7");
+                        ResultSet rs6 = st6.executeQuery("select * from video where code<>'"+video_code+"' order by rand() limit 0,7 ");
                         while(rs6.next()){
                             String channel_code2 = rs6.getString("channel_code");
                             Statement st7 = cn.createStatement();
-                            ResultSet rs7 = st7.executeQuery("select * from channel where code='"+channel_code2+"'");
+                            ResultSet rs7 = st7.executeQuery("select * from channel where code='"+channel_code2+"' AND status='0'");
                             if(rs7.next()){
                         %>
                         <a href="video-page.jsp?vcode=<%=rs6.getString("code")%>" class="small-thumbnail"><img src="channel_Video/<%=rs6.getString("code")%>.jpg" class="img-fluid rounded"></a>
@@ -1274,6 +1443,9 @@ a{
                             }
                         }
                     %>
+                </div>
+                <div class="load-more-video">
+                    <center></center>
                 </div>
             </div>
         </div>
